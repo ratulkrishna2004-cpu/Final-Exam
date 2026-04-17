@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EEE 2.1 Exam Dashboard</title>
+    <style>
+        :root {
+            --glass: rgba(255, 255, 255, 0.1);
+            --border: rgba(255, 255, 255, 0.2);
+        }
+
+        body {
+            margin: 0; padding: 0;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            /* Eikhane tomar file name update kora hoyeche */
+            background: linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.85)), 
+                        url('Final Exam.png') no-repeat center center fixed;
+            background-size: cover;
+            color: #fff;
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh; overflow-x: hidden;
+        }
+
+        .header h1 { 
+            margin-top: 25px; 
+            font-size: 1.8rem; 
+            text-align: center;
+            letter-spacing: 1px;
+            text-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+        
+        /* Adaptive Wheel */
+        .wheel-container {
+            position: relative;
+            width: 300px; height: 300px;
+            margin: 20px 0;
+            transition: transform 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @media (min-width: 768px) {
+            .wheel-container { width: 380px; height: 380px; margin: 40px 0; }
+        }
+
+        .wheel {
+            position: relative;
+            width: 100%; height: 100%;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 6px solid var(--border);
+            box-shadow: 0 0 40px rgba(0,0,0,0.7);
+        }
+
+        .segment {
+            position: absolute;
+            width: 50%; height: 50%;
+            transform-origin: 100% 100%;
+            cursor: pointer;
+            clip-path: polygon(0 0, 100% 0, 100% 100%);
+        }
+
+        /* 3D Gradient Colors */
+        .s1 { background: linear-gradient(45deg, #ff5f6d, #ffc371); transform: rotate(0deg) skewY(-18deg); }
+        .s2 { background: linear-gradient(45deg, #f1c40f, #f39c12); transform: rotate(72deg) skewY(-18deg); }
+        .s3 { background: linear-gradient(45deg, #11998e, #38ef7d); transform: rotate(144deg) skewY(-18deg); }
+        .s4 { background: linear-gradient(45deg, #00c6ff, #0072ff); transform: rotate(216deg) skewY(-18deg); }
+        .s5 { background: linear-gradient(45deg, #8e44ad, #c39bd3); transform: rotate(288deg) skewY(-18deg); }
+
+        .segment span {
+            transform: skewY(18deg) rotate(-45deg);
+            position: absolute;
+            font-weight: 900;
+            text-align: center;
+            width: 75px;
+            right: 15px; top: 40px;
+            font-size: 0.8rem;
+        }
+        .s2 span { color: #222; }
+
+        .routine-btn {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px; height: 80px;
+            background: #fff; color: #1a1a1a;
+            border-radius: 50%; border: none;
+            cursor: pointer; font-weight: 900;
+            z-index: 10; font-size: 0.65rem;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+        }
+
+        /* Glassmorphism Info Card */
+        .info-card {
+            width: 85%; max-width: 460px;
+            padding: 20px; border-radius: 20px;
+            backdrop-filter: blur(25px);
+            text-align: center; display: none;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+            margin-bottom: 50px;
+            border: 1px solid var(--border);
+            animation: popIn 0.5s ease;
+        }
+
+        @keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        .details-grid {
+            display: grid; grid-template-columns: 1fr 1fr;
+            gap: 12px; margin: 15px 0;
+        }
+
+        .box { background: rgba(0,0,0,0.4); padding: 10px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); }
+        .box small { display: block; color: #bbb; font-size: 0.65rem; margin-bottom: 2px; }
+        .box b { font-size: 0.9rem; }
+
+        .drive-btn {
+            display: block; padding: 14px;
+            background: #fff; color: #000;
+            text-decoration: none; border-radius: 30px;
+            font-weight: bold; font-size: 0.9rem; transition: 0.3s;
+        }
+        .drive-btn:hover { background: #eee; transform: translateY(-2px); }
+
+        /* Full Routine Modal (Responsive & 3D) */
+        #routineModal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.96);
+            z-index: 1000;
+            overflow-y: auto;
+            padding: 30px 15px;
+        }
+
+        .modal-content { max-width: 550px; margin: 0 auto; }
+
+        .routine-card {
+            background: rgba(255,255,255,0.08);
+            margin-bottom: 15px;
+            padding: 15px;
+            border-radius: 18px;
+            border-left: 6px solid;
+            display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            transition: 0.3s;
+        }
+        .routine-card:hover { transform: translateX(8px); background: rgba(255,255,255,0.12); }
+
+        .card-left b { font-size: 1.1rem; display: block; color: #fff; }
+        .card-left span { font-size: 0.8rem; color: #aaa; }
+        .card-right { text-align: right; font-size: 0.9rem; font-weight: bold; line-height: 1.4; }
+
+        .close-btn {
+            background: #ff4757; color: #fff; border: none;
+            padding: 12px 30px; border-radius: 25px;
+            margin: 20px auto; display: block; cursor: pointer;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>AUST EEE 2/1 EXAM PORTAL</h1>
+    </div>
+
+    <div class="wheel-container" id="wheelFrame">
+        <div class="wheel">
+            <div class="segment s1" onclick="loadCourse(0)"><span>EEE-2105</span></div>
+            <div class="segment s2" onclick="loadCourse(1)"><span>EEE-2103</span></div>
+            <div class="segment s3" onclick="loadCourse(2)"><span>MATH-2103</span></div>
+            <div class="segment s4" onclick="loadCourse(3)"><span>ME-2151</span></div>
+            <div class="segment s5" onclick="loadCourse(4)"><span>HUM-2109</span></div>
+        </div>
+        <button class="routine-btn" onclick="openRoutine()">VIEW<br>ROUTINE</button>
+    </div>
+
+    <div id="infoCard" class="info-card">
+        <h2 id="title" style="margin:0; font-size: 1.3rem; color: #fff;">Subject</h2>
+        <div class="details-grid">
+            <div class="box"><small>📅 DATE</small><span id="dateText">-</span></div>
+            <div class="box"><small>🕒 TIME</small><span id="timeText">-</span></div>
+            <div class="box"><small>🗓 DAY</small><span id="dayText">-</span></div>
+            <div class="box"><small>📍 VENUE</small><span>AUST Campus</span></div>
+        </div>
+        <a id="driveBtn" href="#" target="_blank" class="drive-btn">📂 OPEN MATERIALS DRIVE</a>
+    </div>
+
+    <div id="routineModal">
+        <div class="modal-content">
+            <h2 style="text-align:center; color:#ffca3a; margin-bottom: 25px;">Final Exam Routine</h2>
+            <div id="fullList"></div>
+            <button class="close-btn" onclick="closeModal()">CLOSE</button>
+        </div>
+    </div>
+
+    <script>
+        const courseData = [
+            { name: "Electronics II", code: "EEE-2105", date: "May 03, 2026", time: "09:30 AM", day: "Sunday", link: "DRIVE_LINK_1", color: "#ff5f6d" },
+            { name: "Digital Electronics", code: "EEE-2103", date: "May 06, 2026", time: "09:30 AM", day: "Wednesday", link: "DRIVE_LINK_2", color: "#f1c40f" },
+            { name: "Mathematics-IV", code: "MATH-2103", date: "May 11, 2026", time: "09:30 AM", day: "Monday", link: "DRIVE_LINK_3", color: "#2ecc71" },
+            { name: "Mechanical Eng.", code: "ME-2151", date: "May 17, 2026", time: "09:30 AM", day: "Sunday", link: "DRIVE_LINK_4", color: "#00c6ff" },
+            { name: "Technical English", code: "HUM-2109", date: "May 20, 2026", time: "09:30 AM", day: "Wednesday", link: "DRIVE_LINK_5", color: "#8e44ad" }
+        ];
+
+        function loadCourse(id) {
+            const course = courseData[id];
+            document.getElementById('wheelFrame').style.transform = `rotate(${-id * 72}deg)`;
+            const card = document.getElementById('infoCard');
+            card.style.display = 'block';
+            card.style.background = `rgba(${hexToRgb(course.color)}, 0.25)`;
+            card.style.borderColor = course.color;
+            
+            document.getElementById('title').innerText = course.name;
+            document.getElementById('dateText').innerText = course.date;
+            document.getElementById('timeText').innerText = course.time;
+            document.getElementById('dayText').innerText = course.day;
+            document.getElementById('driveBtn').href = course.link;
+        }
+
+        function openRoutine() {
+            const modal = document.getElementById('routineModal');
+            const list = document.getElementById('fullList');
+            modal.style.display = 'block';
+            list.innerHTML = courseData.map(c => `
+                <div class="routine-card" style="border-left-color: ${c.color}">
+                    <div class="card-left">
+                        <b>${c.name}</b>
+                        <span>${c.code} | ${c.time}</span>
+                    </div>
+                    <div class="card-right">
+                        ${c.date}<br><span style="color:#aaa; font-weight:normal;">${c.day}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function closeModal() { document.getElementById('routineModal').style.display = 'none'; }
+
+        function hexToRgb(hex) {
+            var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` : "255,255,255";
+        }
+    </script>
+</body>
+</html>
