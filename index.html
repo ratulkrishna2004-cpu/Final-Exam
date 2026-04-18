@@ -45,13 +45,12 @@
             .wheel-container { width: 480px; height: 480px; margin-top: 400px; }
         }
 
-        /* --- Hammer Box: Adjusted to Center the Head --- */
+        /* --- Hammer Box: Perfectly Centered --- */
         .hammer-box {
             position: absolute;
             top: -420px; 
-            /* 'left' ektu bariye 'transform' diye center kora hoyeche jate head majhe thake */
-            left: 50%; 
-            transform: translateX(-42%); /* -50% theke bariye -42% kora hoyeche jate halka dane shore */
+            left: 50%; /* Screen er thik majhkhan theke shuru */
+            transform: translateX(-50%); /* Nijer width er ordhek bame shore purapuri center hobe */
             width: 390px; 
             height: 390px;
             z-index: 50; 
@@ -63,7 +62,7 @@
         }
 
         @media (min-width: 768px) {
-            .hammer-box { width: 430px; height: 430px; top: -520px; transform: translateX(-40%); }
+            .hammer-box { width: 430px; height: 430px; top: -520px; }
         }
 
         .hammer-img {
@@ -133,20 +132,7 @@
             transform: translate(-50%, -50%);
         }
 
-        /* --- Rest of UI --- */
-        .modal {
-            display: none; position: fixed; z-index: 100;
-            left: 0; top: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.95); backdrop-filter: blur(15px);
-            justify-content: center; align-items: center; overflow-y: auto; padding: 20px 0;
-        }
-        .modal-content { width: 90%; max-width: 500px; text-align: center; }
-        .routine-card {
-            background: rgba(255, 255, 255, 0.08); margin-bottom: 15px;
-            padding: 15px 20px; border-radius: 20px; display: flex;
-            justify-content: space-between; align-items: center; text-align: left;
-            border-left: 6px solid; transition: transform 0.3s;
-        }
+        /* --- Footer & Cards --- */
         .info-card {
             width: 85%; max-width: 500px; padding: 25px; border-radius: 25px;
             backdrop-filter: blur(20px); text-align: center; display: none;
@@ -179,32 +165,20 @@
         <button class="routine-btn" onclick="openRoutine()">VIEW<br>ROUTINE</button>
     </div>
 
-    <div id="routineModal" class="modal">
-        <div class="modal-content">
-            <h2 style="color:#ffca3a">Final Exam Routine</h2>
-            <div id="cardList"></div>
-            <button style="margin-top:20px; padding:10px 30px; border-radius:20px; cursor:pointer;" onclick="closeRoutine()">CLOSE</button>
-        </div>
-    </div>
-
     <div id="infoCard" class="info-card">
         <h2 id="title" style="margin:0; color: #ffca3a;">Subject</h2>
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin: 20px 0;">
-            <div style="background:rgba(255,255,255,0.05); padding:10px; border-radius:10px;"><small>📅 DATE</small><br><span id="dateText">-</span></div>
-            <div style="background:rgba(255,255,255,0.05); padding:10px; border-radius:10px;"><small>🕒 TIME</small><br><span id="timeText">-</span></div>
-        </div>
-        <a id="driveBtn" href="#" target="_blank" class="drive-btn">📂 OPEN MATERIALS DRIVE</a>
+        <a id="driveBtn" href="#" target="_blank" class="drive-btn" style="margin-top:20px;">📂 OPEN MATERIALS DRIVE</a>
     </div>
 
     <div class="footer">Developed by: <b>Ratul Krishna Mojumder</b></div>
 
     <script>
         const courseData = [
-            { name: "Electrical Machineries", code: "EEE-2105", date: "May 03, 2026", time: "09:30 AM", link: "https://drive.google.com/drive/folders/1VpU2gqtwiapRvBhHxeXenZraFj9seVK1", color: "#ff5f6d" },
-            { name: "Digital Circuit Design", code: "EEE-2103", date: "May 06, 2026", time: "09:30 AM", link: "https://drive.google.com/drive/folders/1rQV9WMWOJKGwlUjHBhig3fMik9SNFbIB", color: "#f1c40f" },
-            { name: "Mathematics-IV", code: "MATH-2103", date: "May 11, 2026", time: "09:30 AM", link: "https://drive.google.com/drive/folders/1QpfegRbmSES0cPU5A2u8ThztCIDnbQhV", color: "#2ecc71" },
-            { name: "Mechanical Eng.", code: "ME-2151", date: "May 17, 2026", time: "09:30 AM", link: "https://drive.google.com/drive/folders/1lpebIYMXh4wugawWNpYKtkOnF-eMYO-0", color: "#00c6ff" },
-            { name: "Technical English", code: "HUM-2109", date: "May 20, 2026", time: "09:30 AM", link: "https://drive.google.com/drive/folders/1pikfV-sZeGvZBv_RTFtm-aUmRC9VgvR7", color: "#8e44ad" }
+            { name: "Electrical Machineries", link: "https://drive.google.com/drive/folders/1VpU2gqtwiapRvBhHxeXenZraFj9seVK1", color: "#ff5f6d" },
+            { name: "Digital Circuit Design", link: "https://drive.google.com/drive/folders/1rQV9WMWOJKGwlUjHBhig3fMik9SNFbIB", color: "#f1c40f" },
+            { name: "Mathematics-IV", link: "https://drive.google.com/drive/folders/1QpfegRbmSES0cPU5A2u8ThztCIDnbQhV", color: "#2ecc71" },
+            { name: "Mechanical Eng.", link: "https://drive.google.com/drive/folders/1lpebIYMXh4wugawWNpYKtkOnF-eMYO-0", color: "#00c6ff" },
+            { name: "Technical English", link: "https://drive.google.com/drive/folders/1pikfV-sZeGvZBv_RTFtm-aUmRC9VgvR7", color: "#8e44ad" }
         ];
 
         function loadCourse(id) {
@@ -213,23 +187,9 @@
             const card = document.getElementById('infoCard');
             card.style.display = 'block';
             document.getElementById('title').innerText = course.name;
-            document.getElementById('dateText').innerText = course.date;
-            document.getElementById('timeText').innerText = course.time;
             document.getElementById('driveBtn').href = course.link;
             card.style.borderColor = course.color;
         }
-
-        function openRoutine() {
-            const modal = document.getElementById('routineModal');
-            const cardList = document.getElementById('cardList');
-            cardList.innerHTML = ''; 
-            courseData.forEach(c => {
-                cardList.innerHTML += `<div class="routine-card" style="border-color:${c.color}"><h3>${c.name}</h3><p>${c.date}</p></div>`;
-            });
-            modal.style.display = 'flex';
-        }
-
-        function closeRoutine() { document.getElementById('routineModal').style.display = 'none'; }
     </script>
 </body>
 </html>
