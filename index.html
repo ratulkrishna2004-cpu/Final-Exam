@@ -34,7 +34,7 @@
         .wheel-container {
             position: relative;
             width: 360px; height: 360px;
-            margin-top: 350px; /* হুইলকে কিছুটা নিচে নামানো হয়েছে হ্যামার থেকে দূরে রাখতে */
+            margin-top: 350px; 
             margin-bottom: 60px;
             display: flex;
             justify-content: center;
@@ -45,16 +45,17 @@
             .wheel-container { width: 480px; height: 480px; margin-top: 400px; }
         }
 
-        /* --- Updated Hammer Box (Higher and Smaller Click Area) --- */
+        /* --- Updated Hammer Box: Bigger & Slightly Lower --- */
         .hammer-box {
             position: absolute;
-            top: -420px; /* আরও উপরে উঠানো হয়েছে */
+            top: -380px; /* halka niche namao, upore ektu jaiga chere */
             left: 50%;
             transform: translateX(-50%);
-            width: 250px; /* ক্লিক এরিয়া কমানো হয়েছে */
-            height: 250px;
+            /* Halka ektu boro koro - previous was 250px/300px */
+            width: 300px; 
+            height: 300px;
             z-index: 50; 
-            pointer-events: auto; /* নিশ্চিত করা হয়েছে যেন এখানে ক্লিক কাজ করে */
+            pointer-events: auto; 
             display: flex;
             justify-content: center;
             align-items: center;
@@ -62,7 +63,8 @@
         }
 
         @media (min-width: 768px) {
-            .hammer-box { width: 300px; height: 300px; top: -480px; }
+            /* Large Screen size updated similarly */
+            .hammer-box { width: 330px; height: 330px; top: -450px; }
         }
 
         .hammer-img {
@@ -84,7 +86,7 @@
             50% { transform: translateY(-15px); }
         }
 
-        /* --- Wheel UI --- */
+        /* --- Wheel UI & Functional Blocks --- */
         .wheel {
             position: absolute;
             width: 100%; height: 100%;
@@ -132,7 +134,7 @@
             transform: translate(-50%, -50%);
         }
 
-        /* Modal & Info Card Styles */
+        /* Routine Interface & Subject Card */
         .modal {
             display: none; position: fixed; z-index: 100;
             left: 0; top: 0; width: 100%; height: 100%;
@@ -140,12 +142,24 @@
             justify-content: center; align-items: center; overflow-y: auto; padding: 20px 0;
         }
         .modal-content { width: 90%; max-width: 500px; text-align: center; }
+        .modal-title { color: #ffca3a; font-size: 1.8rem; margin-bottom: 25px; font-weight: 800; }
         .routine-card {
             background: rgba(255, 255, 255, 0.08); margin-bottom: 15px;
             padding: 15px 20px; border-radius: 20px; display: flex;
             justify-content: space-between; align-items: center; text-align: left;
-            border-left: 6px solid; transition: transform 0.3s;
+            border-left: 6px solid; box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            transition: transform 0.3s;
         }
+        .card-left h3 { margin: 0; font-size: 1.1rem; color: #fff; }
+        .card-left p { margin: 5px 0 0; font-size: 0.8rem; color: rgba(255,255,255,0.6); }
+        .card-right { text-align: right; }
+        .card-right .date { font-weight: bold; font-size: 0.9rem; color: #fff; }
+        .card-right .day { font-size: 0.8rem; color: rgba(255,255,255,0.5); }
+        .close-btn-round {
+            margin-top: 20px; padding: 12px 40px; background: #ff4757; color: #fff;
+            border: none; border-radius: 30px; font-weight: 900; cursor: pointer;
+        }
+
         .info-card {
             width: 85%; max-width: 500px; padding: 25px; border-radius: 25px;
             backdrop-filter: blur(20px); text-align: center; display: none;
@@ -182,9 +196,9 @@
 
     <div id="routineModal" class="modal">
         <div class="modal-content">
-            <h2 style="color:#ffca3a">Final Exam Routine</h2>
+            <div class="modal-title">Final Exam Routine</div>
             <div id="cardList"></div>
-            <button style="margin-top:20px; padding:10px 30px; border-radius:20px; cursor:pointer;" onclick="closeRoutine()">CLOSE</button>
+            <button class="close-btn-round" onclick="closeRoutine()">CLOSE</button>
         </div>
     </div>
 
@@ -230,14 +244,17 @@
             courseData.forEach(c => {
                 cardList.innerHTML += `
                     <div class="routine-card" style="border-color: ${c.color}">
-                        <div class="card-left"><h3>${c.name}</h3><p>${c.code}</p></div>
-                        <div class="card-right"><div class="date">${c.date}</div></div>
-                    </div>`;
+                        <div class="card-left"><h3>${c.name}</h3><p>${c.code} | ${c.time}</p></div>
+                        <div class="card-right"><div class="date">${c.date}</div><div class="day">${c.day}</div></div>
+                    </div>
+                `;
             });
             modal.style.display = 'flex';
         }
 
-        function closeRoutine() { document.getElementById('routineModal').style.display = 'none'; }
+        function closeRoutine() {
+            document.getElementById('routineModal').style.display = 'none';
+        }
     </script>
 </body>
 </html>
